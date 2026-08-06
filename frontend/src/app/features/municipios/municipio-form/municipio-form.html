@@ -1,0 +1,122 @@
+<div class="mx-auto max-w-2xl px-4 py-8">
+  <a routerLink="/" class="text-sm text-brand-blue hover:underline">&larr; Voltar</a>
+
+  <h1 class="mt-2 text-2xl font-bold text-gray-900">
+    {{ municipioId() ? 'Editar Município' : 'Novo Município' }}
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="mt-6 space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nome do município *</label>
+      <input
+        type="text"
+        formControlName="nome"
+        class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      />
+      @if (form.controls.nome.invalid && form.controls.nome.touched) {
+        <p class="mt-1 text-xs text-brand-red">Informe o nome do município.</p>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Código IBGE</label>
+        <input
+          type="text"
+          formControlName="codigoIbge"
+          class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Região</label>
+        <input
+          type="text"
+          formControlName="regiao"
+          class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">População</label>
+        <input
+          type="number"
+          formControlName="populacao"
+          class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Data de início</label>
+        <input
+          type="date"
+          formControlName="dataInicio"
+          class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Patrocinador executivo</label>
+      <input
+        type="text"
+        formControlName="patrocinadorExecutivo"
+        class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      />
+    </div>
+
+    <fieldset class="rounded-lg border border-gray-200 p-4">
+      <legend class="px-1 text-sm font-semibold text-gray-700">Ponto focal</legend>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Nome</label>
+          <input
+            type="text"
+            formControlName="pontoFocalNome"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">E-mail</label>
+          <input
+            type="email"
+            formControlName="pontoFocalEmail"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Telefone</label>
+          <input
+            type="text"
+            formControlName="pontoFocalTelefone"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+          />
+        </div>
+      </div>
+    </fieldset>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Observações</label>
+      <textarea
+        formControlName="observacoes"
+        rows="3"
+        class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      ></textarea>
+    </div>
+
+    @if (erro()) {
+      <p class="text-sm text-brand-red">{{ erro() }}</p>
+    }
+
+    <div class="flex items-center gap-3 pt-2">
+      <button
+        type="submit"
+        [disabled]="salvando()"
+        class="rounded-lg bg-brand-blue px-5 py-2 text-sm font-semibold text-white shadow hover:opacity-90 disabled:opacity-50"
+      >
+        {{ salvando() ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <a routerLink="/" class="text-sm text-gray-500 hover:underline">Cancelar</a>
+    </div>
+  </form>
+</div>

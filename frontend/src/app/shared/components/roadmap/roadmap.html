@@ -1,0 +1,27 @@
+<div class="w-full overflow-x-auto pb-2">
+  <div class="flex min-w-max items-start">
+    @for (etapa of etapas(); track etapa.id; let last = $last) {
+      <div class="flex items-center">
+        <button
+          type="button"
+          class="flex w-32 flex-col items-center gap-2 rounded-lg px-2 py-1 text-center transition hover:bg-gray-50"
+          [class.ring-2]="selectedEtapaId() === etapa.id"
+          [class.ring-brand-blue]="selectedEtapaId() === etapa.id"
+          (click)="etapaSelecionada.emit(etapa.id)"
+        >
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold"
+            [class]="statusClass(etapa)"
+          >
+            {{ etapa.ordem + 1 }}
+          </span>
+          <span class="text-xs font-medium text-gray-700 leading-tight">{{ etapa.nome }}</span>
+          <span class="text-[11px] text-gray-500">{{ etapa.progresso }}%</span>
+        </button>
+        @if (!last) {
+          <div class="h-0.5 w-8 shrink-0" [class]="connectorClass(etapa)"></div>
+        }
+      </div>
+    }
+  </div>
+</div>
