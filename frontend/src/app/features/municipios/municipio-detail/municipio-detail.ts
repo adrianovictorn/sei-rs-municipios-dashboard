@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { MunicipioService } from '../../../core/services/municipio.service';
 import { EtapaService } from '../../../core/services/etapa.service';
 import { ChecklistItemService } from '../../../core/services/checklist-item.service';
@@ -37,6 +38,9 @@ export class MunicipioDetailPage {
 
   novoItemTexto: Record<number, string> = {};
 
+  mostrarResumo = signal(false);
+  resumoCopiado = signal(false);
+
   constructor() {
     this.carregar();
   }
@@ -58,6 +62,25 @@ export class MunicipioDetailPage {
 
   toggleItem(item: { id: number; concluido: boolean }): void {
     this.checklistItemService.atualizar(item.id, { concluido: !item.concluido }).subscribe(() => this.carregar());
+  }
+
+  etapaTodosConcluidos(etapa: Etapa): boolean {
+    return etapa.checklistItems.length > 0 && etapa.checklistItems.every((item) => item.concluido);
+  }
+
+  alternarTodosItens(etapa: Etapa): void {
+    if (etapa.checklistItems.length === 0) {
+      return;
+    }
+    const novoValor = !this.etapaTodosConcluidos(etapa);
+    const pendentes = etapa.checklistItems.filter((item) => item.concluido !== novoValor);
+    if (pendentes.length === 0) {
+      return;
+    }
+    const requisicoes = pendentes.map((item) =>
+      this.checklistItemService.atualizar(item.id, { concluido: novoValor })
+    );
+    forkJoin(requisicoes).subscribe(() => this.carregar());
   }
 
   adicionarItem(etapa: Etapa): void {
@@ -112,5 +135,48 @@ export class MunicipioDetailPage {
 
   cancelarEdicaoEtapa(): void {
     this.etapaEmEdicaoId.set(null);
+  }
+
+  get etapasConcluidas(): Etapa[] {
+    return this.municipio()?.etapas.filter((etapa) => etapa.status === 'CONCLUIDA') ?? [];
+  }
+
+  get resumoTexto(): string {
+    const m = this.municipio();
+    if (!m) {
+      return '';
+    }
+    const concluidas = this.etapasConcluidas;
+    if (concluidas.length === 0) {
+      return `Resumo de etapas concluídas — ${m.nome}\nNenhuma etapa concluída até o momento.`;
+    }
+    const linhas = [`Resumo de etapas concluídas — ${m.nome}`, `Gerado em ${new Date().toLocaleDateString('pt-BR')}`, ''];
+    for (const etapa of concluidas) {
+      linhas.push(`✅ ${etapa.nome}`);
+      if (etapa.descricao) {
+        linhas.push(`   ${etapa.descricao}`);
+      }
+      for (const item of etapa.checklistItems) {
+        linhas.push(`   - ${item.descricao}`);
+      }
+      linhas.push('');
+    }
+    return linhas.join('\n').trim();
+  }
+
+  abrirResumo(): void {
+    this.resumoCopiado.set(false);
+    this.mostrarResumo.set(true);
+  }
+
+  fecharResumo(): void {
+    this.mostrarResumo.set(false);
+  }
+
+  copiarResumo(): void {
+    navigator.clipboard.writeText(this.resumoTexto).then(() => {
+      this.resumoCopiado.set(true);
+      setTimeout(() => this.resumoCopiado.set(false), 2000);
+    });
   }
 }
