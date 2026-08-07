@@ -1,0 +1,136 @@
+<div class="mx-auto max-w-6xl px-4 py-8">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Kanban de atividades</h1>
+      <p class="text-sm text-gray-500">Visão geral das atividades do checklist, organizadas por status.</p>
+    </div>
+    <a routerLink="/" class="text-sm text-brand-blue hover:underline">&larr; Voltar para municípios</a>
+  </div>
+
+  @if (carregando()) {
+    <p class="mt-6 text-gray-500">Carregando...</p>
+  } @else if (municipiosDetalhados().length === 0) {
+    <div class="mt-6 rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
+      Nenhum município cadastrado ainda.
+    </div>
+  } @else {
+    <div class="mt-6 max-w-sm">
+      <label class="mb-1 block text-xs font-semibold text-gray-500">Município</label>
+      <select
+        [ngModel]="municipioSelecionadoId()"
+        (ngModelChange)="selecionarMunicipio($event)"
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      >
+        @for (m of municipiosDetalhados(); track m.id) {
+          <option [value]="m.id">{{ m.nome }}</option>
+        }
+      </select>
+    </div>
+
+    @if (municipioSelecionado(); as municipioAtual) {
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold text-gray-900">Cadastro de atividades por município</h2>
+        <p class="text-sm text-gray-500">
+          Etapas do processo e atividades cadastradas de {{ municipioAtual.nome }}; a cor mostra o status.
+        </p>
+
+        <div class="mt-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="space-y-3">
+            @for (etapa of etapasOrdenadas(municipioAtual); track etapa.id) {
+              <div class="flex flex-col gap-2 border-t border-gray-100 pt-3 first:border-t-0 first:pt-0 sm:flex-row sm:items-start">
+                <span class="w-full shrink-0 text-sm font-medium text-gray-700 sm:w-52">{{ etapa.nome }}</span>
+                <div class="flex flex-1 flex-wrap gap-2">
+                  @for (item of itensOrdenados(etapa); track item.id) {
+                    <span
+                      class="flex h-12 w-32 items-center justify-center rounded px-2 text-center text-[11px] font-medium leading-tight"
+                      [class]="corItem(item, etapa)"
+                      [title]="tituloItem(item)"
+                    >
+                      <span class="line-clamp-2">{{ item.descricao }}</span>
+                    </span>
+                  } @empty {
+                    <span class="text-xs text-gray-400">Nenhuma atividade cadastrada.</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-4 text-xs text-gray-500">
+          <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-brand-green"></span> Concluída</span>
+          <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-brand-yellow"></span> Pendente — etapa em andamento</span>
+          <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-brand-red"></span> Pendente — etapa não iniciada</span>
+        </div>
+      </div>
+    }
+
+    @if (atividades().length === 0) {
+      <div class="mt-6 rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
+        Este município ainda não tem itens de checklist cadastrados nas etapas.
+      </div>
+    } @else {
+      <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="rounded-xl border border-gray-200 bg-gray-50">
+          <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+            <span class="text-sm font-semibold text-gray-700">Pendente</span>
+            <span class="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-bold text-gray-600">
+              {{ pendentes().length }}
+            </span>
+          </div>
+          <div class="space-y-2 p-3">
+            @for (atividade of pendentes(); track atividade.itemId) {
+              <div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+                <p class="text-sm text-gray-800">{{ atividade.descricao }}</p>
+                <div class="mt-2 flex items-center justify-between">
+                  <span class="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] font-medium text-brand-blue">
+                    {{ atividade.etapaNome }}
+                  </span>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-brand-green hover:underline"
+                    (click)="moverAtividade(atividade)"
+                  >
+                    Concluir &rarr;
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <p class="p-2 text-sm text-gray-400">Nenhuma atividade pendente.</p>
+            }
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-gray-200 bg-gray-50">
+          <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+            <span class="text-sm font-semibold text-gray-700">Concluído</span>
+            <span class="rounded-full bg-brand-green/15 px-2 py-0.5 text-xs font-bold text-brand-green">
+              {{ concluidas().length }}
+            </span>
+          </div>
+          <div class="space-y-2 p-3">
+            @for (atividade of concluidas(); track atividade.itemId) {
+              <div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+                <p class="text-sm text-gray-500 line-through">{{ atividade.descricao }}</p>
+                <div class="mt-2 flex items-center justify-between">
+                  <span class="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] font-medium text-brand-blue">
+                    {{ atividade.etapaNome }}
+                  </span>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-gray-400 hover:underline"
+                    (click)="moverAtividade(atividade)"
+                  >
+                    &larr; Reabrir
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <p class="p-2 text-sm text-gray-400">Nenhuma atividade concluída ainda.</p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
