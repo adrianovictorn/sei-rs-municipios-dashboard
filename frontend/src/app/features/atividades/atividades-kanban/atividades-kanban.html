@@ -22,7 +22,7 @@
         class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
       >
         @for (m of municipiosDetalhados(); track m.id) {
-          <option [value]="m.id">{{ m.nome }}</option>
+          <option [ngValue]="m.id">{{ m.nome }}</option>
         }
       </select>
     </div>
