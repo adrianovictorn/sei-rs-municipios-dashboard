@@ -11,6 +11,8 @@ public record EtapaTemplateResponse(
         String descricao,
         Integer ordem,
         Integer duracaoDias,
+        boolean exibirMatriz,
+        Integer ordemMatriz,
         List<ChecklistItemTemplateResponse> itens
 ) {
     public static EtapaTemplateResponse from(EtapaTemplate template) {
@@ -20,6 +22,8 @@ public record EtapaTemplateResponse(
                 template.getDescricao(),
                 template.getOrdem(),
                 template.getDuracaoDias(),
+                template.isExibirMatriz(),
+                template.getOrdemMatriz(),
                 template.getItensOrdenados().stream()
                         .map(ChecklistItemTemplateResponse::from)
                         .toList()

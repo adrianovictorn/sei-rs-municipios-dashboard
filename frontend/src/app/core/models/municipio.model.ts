@@ -9,6 +9,9 @@ export interface MunicipioSummary {
   totalEtapas: number;
   etapasConcluidas: number;
   etapaAtual: string | null;
+  equipeId: number | null;
+  equipeNome: string | null;
+  parado: boolean;
 }
 
 export interface MunicipioDetail {
@@ -23,6 +26,9 @@ export interface MunicipioDetail {
   pontoFocalTelefone: string | null;
   dataInicio: string | null;
   observacoes: string | null;
+  equipeId: number | null;
+  equipeNome: string | null;
+  parado: boolean;
   progresso: number;
   createdAt: string;
   updatedAt: string;
@@ -40,4 +46,6 @@ export interface MunicipioRequest {
   pontoFocalTelefone?: string;
   dataInicio?: string;
   observacoes?: string;
+  equipeId?: number;
+  parado?: boolean;
 }

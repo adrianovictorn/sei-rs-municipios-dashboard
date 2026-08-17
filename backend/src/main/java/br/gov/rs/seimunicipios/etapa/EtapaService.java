@@ -69,6 +69,7 @@ public class EtapaService {
     }
 
     private void aplicarCronograma(Etapa etapa, EtapaRequest request) {
+        etapa.setDataSolicitacao(request.dataSolicitacao());
         etapa.setDataInicio(request.dataInicio());
         etapa.setDataFim(request.dataFim());
         etapa.setDuracaoDias(request.duracaoDias());

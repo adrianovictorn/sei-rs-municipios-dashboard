@@ -6,6 +6,8 @@ public record EtapaTemplateRequest(
         @NotBlank String nome,
         String descricao,
         Integer ordem,
-        Integer duracaoDias
+        Integer duracaoDias,
+        Boolean exibirMatriz,
+        Integer ordemMatriz
 ) {
 }

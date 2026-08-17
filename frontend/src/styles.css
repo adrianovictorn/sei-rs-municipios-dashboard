@@ -5,8 +5,29 @@
   --color-brand-green: #6aa42d;
   --color-brand-red: #d31145;
   --color-brand-yellow: #f5a800;
+  --color-brand-navy: #0f2a52;
 }
 
 body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print,
+  header {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }

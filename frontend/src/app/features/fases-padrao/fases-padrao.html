@@ -34,7 +34,7 @@
         placeholder="Descrição (opcional)"
         class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
       />
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <input
           type="number"
           [ngModel]="novaFaseDuracao()"
@@ -42,6 +42,24 @@
           placeholder="Duração padrão (dias)"
           class="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
         />
+        <label class="flex items-center gap-1.5 text-sm text-gray-600">
+          <input
+            type="checkbox"
+            [ngModel]="novaFaseExibirMatriz()"
+            (ngModelChange)="novaFaseExibirMatriz.set($event)"
+            class="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue"
+          />
+          Mostrar na matriz de status
+        </label>
+        @if (novaFaseExibirMatriz()) {
+          <input
+            type="number"
+            [ngModel]="novaFaseOrdemMatriz()"
+            (ngModelChange)="novaFaseOrdemMatriz.set($event)"
+            placeholder="Ordem na matriz"
+            class="w-36 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+          />
+        }
         <button
           type="button"
           class="rounded-lg bg-brand-green px-3 py-2 text-sm font-semibold text-white hover:opacity-90"
@@ -80,6 +98,11 @@
               @if (fase.duracaoDias) {
                 <span class="text-xs text-gray-500">{{ fase.duracaoDias }} dias</span>
               }
+              @if (fase.exibirMatriz) {
+                <span class="inline-flex items-center rounded-full bg-brand-navy/10 px-2 py-0.5 text-[11px] font-semibold text-brand-navy">
+                  Coluna da matriz
+                </span>
+              }
             </button>
 
             @if (faseEmEdicaoId() === fase.id) {
@@ -90,6 +113,24 @@
                 placeholder="Duração (dias)"
                 class="w-32 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
               />
+              <label class="flex items-center gap-1.5 text-xs text-gray-600">
+                <input
+                  type="checkbox"
+                  [ngModel]="faseEdicaoExibirMatriz()"
+                  (ngModelChange)="faseEdicaoExibirMatriz.set($event)"
+                  class="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue"
+                />
+                Matriz
+              </label>
+              @if (faseEdicaoExibirMatriz()) {
+                <input
+                  type="number"
+                  [ngModel]="faseEdicaoOrdemMatriz()"
+                  (ngModelChange)="faseEdicaoOrdemMatriz.set($event)"
+                  placeholder="Ordem"
+                  class="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+                />
+              }
               <button type="button" class="text-xs font-semibold text-brand-green" (click)="salvarEdicaoFase(fase)">salvar</button>
               <button type="button" class="text-xs text-gray-400" (click)="cancelarEdicaoFase()">cancelar</button>
             } @else {

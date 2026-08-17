@@ -15,6 +15,8 @@ public record MunicipioRequest(
         @Email String pontoFocalEmail,
         String pontoFocalTelefone,
         LocalDate dataInicio,
-        String observacoes
+        String observacoes,
+        Long equipeId,
+        Boolean parado
 ) {
 }

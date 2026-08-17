@@ -137,6 +137,10 @@ export class MunicipioDetailPage {
     this.etapaEmEdicaoId.set(null);
   }
 
+  atualizarDataSolicitacao(etapa: Etapa, valor: string): void {
+    this.salvarCronograma(etapa, { dataSolicitacao: valor || undefined });
+  }
+
   atualizarDataInicio(etapa: Etapa, valor: string): void {
     this.salvarCronograma(etapa, { dataInicio: valor || undefined });
   }
@@ -161,6 +165,7 @@ export class MunicipioDetailPage {
     const request: EtapaRequest = {
       nome: etapa.nome,
       descricao: etapa.descricao ?? undefined,
+      dataSolicitacao: etapa.dataSolicitacao ?? undefined,
       dataInicio: etapa.dataInicio ?? undefined,
       dataFim: etapa.dataFim ?? undefined,
       duracaoDias: etapa.duracaoDias ?? undefined,

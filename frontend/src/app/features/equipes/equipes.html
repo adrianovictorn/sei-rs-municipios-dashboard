@@ -1,0 +1,53 @@
+<div class="mx-auto max-w-2xl px-4 py-8">
+  <a routerLink="/" class="text-sm text-brand-blue hover:underline">&larr; Voltar</a>
+
+  <h1 class="mt-2 text-2xl font-bold text-gray-900">Equipes</h1>
+  <p class="text-sm text-gray-500">Equipes responsáveis pelos municípios, usadas na matriz de status.</p>
+
+  <div class="mt-4 flex gap-2">
+    <input
+      type="text"
+      [ngModel]="novoNome()"
+      (ngModelChange)="novoNome.set($event)"
+      (keyup.enter)="adicionar()"
+      placeholder="Nome da equipe"
+      class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+    />
+    <button
+      type="button"
+      class="rounded-lg bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+      (click)="adicionar()"
+    >
+      Adicionar
+    </button>
+  </div>
+
+  @if (carregando()) {
+    <p class="mt-6 text-gray-500">Carregando...</p>
+  } @else if (erro()) {
+    <p class="mt-6 text-brand-red">{{ erro() }}</p>
+  } @else if (equipes().length === 0) {
+    <p class="mt-6 text-gray-400">Nenhuma equipe cadastrada ainda.</p>
+  } @else {
+    <ul class="mt-6 space-y-2">
+      @for (equipe of equipes(); track equipe.id) {
+        <li class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          @if (equipeEmEdicaoId() === equipe.id) {
+            <input
+              type="text"
+              [ngModel]="edicaoNome()"
+              (ngModelChange)="edicaoNome.set($event)"
+              class="flex-1 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+            />
+            <button type="button" class="text-xs font-semibold text-brand-green" (click)="salvarEdicao(equipe)">salvar</button>
+            <button type="button" class="text-xs text-gray-400" (click)="cancelarEdicao()">cancelar</button>
+          } @else {
+            <span class="flex-1 text-sm font-medium text-gray-900">{{ equipe.nome }}</span>
+            <button type="button" class="text-xs text-gray-400 hover:text-brand-blue" (click)="iniciarEdicao(equipe)">editar</button>
+            <button type="button" class="text-xs text-gray-400 hover:text-brand-red" (click)="remover(equipe)">remover</button>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

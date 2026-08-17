@@ -49,6 +49,8 @@ public class EtapaTemplateService {
         template.setDescricao(request.descricao());
         template.setOrdem(request.ordem() != null ? request.ordem() : etapaTemplateRepository.findAll().size());
         template.setDuracaoDias(request.duracaoDias());
+        template.setExibirMatriz(Boolean.TRUE.equals(request.exibirMatriz()));
+        template.setOrdemMatriz(request.ordemMatriz());
         etapaTemplateRepository.save(template);
 
         for (Municipio municipio : municipioRepository.findAll()) {
@@ -72,6 +74,8 @@ public class EtapaTemplateService {
             template.setOrdem(request.ordem());
         }
         template.setDuracaoDias(request.duracaoDias());
+        template.setExibirMatriz(Boolean.TRUE.equals(request.exibirMatriz()));
+        template.setOrdemMatriz(request.ordemMatriz());
         return EtapaTemplateResponse.from(etapaTemplateRepository.save(template));
     }
 

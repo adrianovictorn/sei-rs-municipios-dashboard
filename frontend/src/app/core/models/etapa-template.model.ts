@@ -17,6 +17,8 @@ export interface EtapaTemplate {
   descricao: string | null;
   ordem: number;
   duracaoDias: number | null;
+  exibirMatriz: boolean;
+  ordemMatriz: number | null;
   itens: ChecklistItemTemplate[];
 }
 
@@ -25,4 +27,6 @@ export interface EtapaTemplateRequest {
   descricao?: string;
   ordem?: number;
   duracaoDias?: number;
+  exibirMatriz?: boolean;
+  ordemMatriz?: number;
 }

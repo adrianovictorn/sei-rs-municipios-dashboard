@@ -15,7 +15,10 @@ public record MunicipioSummaryResponse(
         int progresso,
         int totalEtapas,
         long etapasConcluidas,
-        String etapaAtual
+        String etapaAtual,
+        Long equipeId,
+        String equipeNome,
+        boolean parado
 ) {
     public static MunicipioSummaryResponse from(Municipio municipio) {
         List<Etapa> etapas = municipio.getEtapasOrdenadas();
@@ -40,7 +43,10 @@ public record MunicipioSummaryResponse(
                 progresso,
                 etapas.size(),
                 concluidas,
-                etapaAtual
+                etapaAtual,
+                municipio.getEquipe() != null ? municipio.getEquipe().getId() : null,
+                municipio.getEquipe() != null ? municipio.getEquipe().getNome() : null,
+                municipio.isParado()
         );
     }
 }

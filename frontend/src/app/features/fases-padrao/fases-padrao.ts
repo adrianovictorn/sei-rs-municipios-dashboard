@@ -22,11 +22,15 @@ export class FasesPadrao {
   novaFaseNome = signal('');
   novaFaseDescricao = signal('');
   novaFaseDuracao = signal<number | null>(null);
+  novaFaseExibirMatriz = signal(false);
+  novaFaseOrdemMatriz = signal<number | null>(null);
 
   faseEmEdicaoId = signal<number | null>(null);
   faseEdicaoNome = signal('');
   faseEdicaoDescricao = signal('');
   faseEdicaoDuracao = signal<number | null>(null);
+  faseEdicaoExibirMatriz = signal(false);
+  faseEdicaoOrdemMatriz = signal<number | null>(null);
 
   novaTarefaTexto: Record<number, string> = {};
   novaTarefaDuracao: Record<number, number | null> = {};
@@ -69,12 +73,16 @@ export class FasesPadrao {
       .adicionarFase({
         nome,
         descricao: this.novaFaseDescricao().trim() || undefined,
-        duracaoDias: this.novaFaseDuracao() ?? undefined
+        duracaoDias: this.novaFaseDuracao() ?? undefined,
+        exibirMatriz: this.novaFaseExibirMatriz(),
+        ordemMatriz: this.novaFaseOrdemMatriz() ?? undefined
       })
       .subscribe(() => {
         this.novaFaseNome.set('');
         this.novaFaseDescricao.set('');
         this.novaFaseDuracao.set(null);
+        this.novaFaseExibirMatriz.set(false);
+        this.novaFaseOrdemMatriz.set(null);
         this.mostrarFormNovaFase.set(false);
         this.carregar();
       });
@@ -92,6 +100,8 @@ export class FasesPadrao {
     this.faseEdicaoNome.set(fase.nome);
     this.faseEdicaoDescricao.set(fase.descricao ?? '');
     this.faseEdicaoDuracao.set(fase.duracaoDias);
+    this.faseEdicaoExibirMatriz.set(fase.exibirMatriz);
+    this.faseEdicaoOrdemMatriz.set(fase.ordemMatriz);
   }
 
   salvarEdicaoFase(fase: EtapaTemplate): void {
@@ -104,7 +114,9 @@ export class FasesPadrao {
         nome,
         descricao: this.faseEdicaoDescricao().trim() || undefined,
         ordem: fase.ordem,
-        duracaoDias: this.faseEdicaoDuracao() ?? undefined
+        duracaoDias: this.faseEdicaoDuracao() ?? undefined,
+        exibirMatriz: this.faseEdicaoExibirMatriz(),
+        ordemMatriz: this.faseEdicaoOrdemMatriz() ?? undefined
       })
       .subscribe(() => {
         this.faseEmEdicaoId.set(null);

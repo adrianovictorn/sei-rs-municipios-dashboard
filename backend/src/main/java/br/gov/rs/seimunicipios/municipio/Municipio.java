@@ -1,5 +1,6 @@
 package br.gov.rs.seimunicipios.municipio;
 
+import br.gov.rs.seimunicipios.equipe.Equipe;
 import br.gov.rs.seimunicipios.etapa.Etapa;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,6 +50,13 @@ public class Municipio {
 
     @Column(columnDefinition = "TEXT")
     private String observacoes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "equipe_id")
+    private Equipe equipe;
+
+    @Column(nullable = false)
+    private boolean parado = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

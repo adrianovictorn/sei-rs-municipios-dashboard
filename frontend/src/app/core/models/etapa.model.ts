@@ -10,6 +10,7 @@ export interface Etapa {
   progresso: number;
   status: EtapaStatus;
   templateId: number | null;
+  dataSolicitacao: string | null;
   dataInicio: string | null;
   dataFim: string | null;
   duracaoDias: number | null;
@@ -22,6 +23,7 @@ export interface EtapaRequest {
   nome: string;
   descricao?: string;
   ordem?: number;
+  dataSolicitacao?: string;
   dataInicio?: string;
   dataFim?: string;
   duracaoDias?: number;

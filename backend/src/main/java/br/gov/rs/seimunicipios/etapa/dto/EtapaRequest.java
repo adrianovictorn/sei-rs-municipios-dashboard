@@ -8,6 +8,7 @@ public record EtapaRequest(
         @NotBlank String nome,
         String descricao,
         Integer ordem,
+        LocalDate dataSolicitacao,
         LocalDate dataInicio,
         LocalDate dataFim,
         Integer duracaoDias,

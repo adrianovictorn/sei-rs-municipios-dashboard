@@ -3,6 +3,7 @@ package br.gov.rs.seimunicipios.municipio;
 import br.gov.rs.seimunicipios.checklist.ChecklistItem;
 import br.gov.rs.seimunicipios.checklist.ChecklistItemTemplate;
 import br.gov.rs.seimunicipios.common.NotFoundException;
+import br.gov.rs.seimunicipios.equipe.EquipeRepository;
 import br.gov.rs.seimunicipios.etapa.Etapa;
 import br.gov.rs.seimunicipios.etapa.EtapaTemplate;
 import br.gov.rs.seimunicipios.etapa.EtapaTemplateRepository;
@@ -23,6 +24,7 @@ public class MunicipioService {
 
     private final MunicipioRepository municipioRepository;
     private final EtapaTemplateRepository etapaTemplateRepository;
+    private final EquipeRepository equipeRepository;
 
     @Transactional(readOnly = true)
     public List<MunicipioSummaryResponse> findAll() {
@@ -70,6 +72,11 @@ public class MunicipioService {
         municipio.setPontoFocalTelefone(request.pontoFocalTelefone());
         municipio.setDataInicio(request.dataInicio());
         municipio.setObservacoes(request.observacoes());
+        municipio.setParado(Boolean.TRUE.equals(request.parado()));
+        municipio.setEquipe(request.equipeId() != null
+                ? equipeRepository.findById(request.equipeId())
+                        .orElseThrow(() -> new NotFoundException("Equipe não encontrada: " + request.equipeId()))
+                : null);
     }
 
     /**

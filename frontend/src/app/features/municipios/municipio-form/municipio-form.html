@@ -65,6 +65,29 @@
       />
     </div>
 
+    <div class="grid grid-cols-2 gap-4 items-end">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Equipe</label>
+        <select
+          formControlName="equipeId"
+          class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        >
+          <option [ngValue]="null">Sem equipe</option>
+          @for (equipe of equipes(); track equipe.id) {
+            <option [ngValue]="equipe.id">{{ equipe.nome }}</option>
+          }
+        </select>
+      </div>
+      <label class="flex items-center gap-2 pb-2 text-sm text-gray-700">
+        <input
+          type="checkbox"
+          formControlName="parado"
+          class="h-4 w-4 rounded border-gray-300 text-brand-red focus:ring-brand-red"
+        />
+        Time parado (sem atividade)
+      </label>
+    </div>
+
     <fieldset class="rounded-lg border border-gray-200 p-4">
       <legend class="px-1 text-sm font-semibold text-gray-700">Ponto focal</legend>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">

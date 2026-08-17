@@ -38,6 +38,9 @@ public class Etapa {
     @Column(nullable = false)
     private Integer ordem = 0;
 
+    @Column(name = "data_solicitacao")
+    private LocalDate dataSolicitacao;
+
     @Column(name = "data_inicio")
     private LocalDate dataInicio;
 

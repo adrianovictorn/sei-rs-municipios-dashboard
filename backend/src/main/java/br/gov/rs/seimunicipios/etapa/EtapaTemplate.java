@@ -31,6 +31,12 @@ public class EtapaTemplate {
     @Column(name = "duracao_dias")
     private Integer duracaoDias;
 
+    @Column(name = "exibir_matriz", nullable = false)
+    private boolean exibirMatriz = false;
+
+    @Column(name = "ordem_matriz")
+    private Integer ordemMatriz;
+
     @OneToMany(mappedBy = "etapaTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItemTemplate> itens = new ArrayList<>();
 

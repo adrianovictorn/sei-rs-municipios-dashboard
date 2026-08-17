@@ -2,6 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MunicipioService } from '../../../core/services/municipio.service';
+import { EquipeService } from '../../../core/services/equipe.service';
+import { Equipe } from '../../../core/models/equipe.model';
 
 @Component({
   selector: 'app-municipio-form',
@@ -12,12 +14,14 @@ import { MunicipioService } from '../../../core/services/municipio.service';
 export class MunicipioForm {
   private readonly fb = inject(FormBuilder);
   private readonly municipioService = inject(MunicipioService);
+  private readonly equipeService = inject(EquipeService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   municipioId = signal<number | null>(null);
   salvando = signal(false);
   erro = signal<string | null>(null);
+  equipes = signal<Equipe[]>([]);
 
   form = this.fb.nonNullable.group({
     nome: ['', [Validators.required, Validators.maxLength(150)]],
@@ -29,10 +33,14 @@ export class MunicipioForm {
     pontoFocalEmail: ['', [Validators.email]],
     pontoFocalTelefone: [''],
     dataInicio: [''],
-    observacoes: ['']
+    observacoes: [''],
+    equipeId: [null as number | null],
+    parado: [false]
   });
 
   constructor() {
+    this.equipeService.listar().subscribe((equipes) => this.equipes.set(equipes));
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
@@ -48,7 +56,9 @@ export class MunicipioForm {
           pontoFocalEmail: municipio.pontoFocalEmail ?? '',
           pontoFocalTelefone: municipio.pontoFocalTelefone ?? '',
           dataInicio: municipio.dataInicio ?? '',
-          observacoes: municipio.observacoes ?? ''
+          observacoes: municipio.observacoes ?? '',
+          equipeId: municipio.equipeId,
+          parado: municipio.parado
         });
       });
     }
@@ -74,7 +84,9 @@ export class MunicipioForm {
       pontoFocalEmail: raw.pontoFocalEmail || undefined,
       pontoFocalTelefone: raw.pontoFocalTelefone || undefined,
       dataInicio: raw.dataInicio || undefined,
-      observacoes: raw.observacoes || undefined
+      observacoes: raw.observacoes || undefined,
+      equipeId: raw.equipeId ?? undefined,
+      parado: raw.parado
     };
 
     const id = this.municipioId();
