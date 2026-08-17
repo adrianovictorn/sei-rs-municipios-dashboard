@@ -73,7 +73,7 @@ public class Municipio {
 
     public List<Etapa> getEtapasOrdenadas() {
         return etapas.stream()
-                .sorted(Comparator.comparing(Etapa::getOrdem))
+                .sorted(Comparator.comparing(Etapa::getOrdemEfetiva))
                 .toList();
     }
 }

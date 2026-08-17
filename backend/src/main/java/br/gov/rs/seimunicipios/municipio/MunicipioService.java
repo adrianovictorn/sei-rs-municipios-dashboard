@@ -1,9 +1,11 @@
 package br.gov.rs.seimunicipios.municipio;
 
 import br.gov.rs.seimunicipios.checklist.ChecklistItem;
+import br.gov.rs.seimunicipios.checklist.ChecklistItemTemplate;
 import br.gov.rs.seimunicipios.common.NotFoundException;
 import br.gov.rs.seimunicipios.etapa.Etapa;
-import br.gov.rs.seimunicipios.etapa.EtapaSeed;
+import br.gov.rs.seimunicipios.etapa.EtapaTemplate;
+import br.gov.rs.seimunicipios.etapa.EtapaTemplateRepository;
 import br.gov.rs.seimunicipios.municipio.dto.MunicipioDetailResponse;
 import br.gov.rs.seimunicipios.municipio.dto.MunicipioRequest;
 import br.gov.rs.seimunicipios.municipio.dto.MunicipioSummaryResponse;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -19,6 +22,7 @@ import java.util.List;
 public class MunicipioService {
 
     private final MunicipioRepository municipioRepository;
+    private final EtapaTemplateRepository etapaTemplateRepository;
 
     @Transactional(readOnly = true)
     public List<MunicipioSummaryResponse> findAll() {
@@ -68,21 +72,30 @@ public class MunicipioService {
         municipio.setObservacoes(request.observacoes());
     }
 
+    /**
+     * Cria as fases/tarefas do municipio a partir do template global (etapa_template/
+     * checklist_item_template), ja vinculadas a ele. Enquanto o vinculo existir, editar o
+     * template propaga o nome/descricao para este municipio automaticamente.
+     */
     private void seedEtapas(Municipio municipio) {
-        int etapaOrdem = 0;
-        for (EtapaSeed.EtapaTemplate etapaTemplate : EtapaSeed.padrao()) {
+        List<EtapaTemplate> etapaTemplates = etapaTemplateRepository.findAll().stream()
+                .sorted(Comparator.comparing(EtapaTemplate::getOrdem))
+                .toList();
+
+        for (EtapaTemplate etapaTemplate : etapaTemplates) {
             Etapa etapa = new Etapa();
             etapa.setMunicipio(municipio);
-            etapa.setNome(etapaTemplate.nome());
-            etapa.setDescricao(etapaTemplate.descricao());
-            etapa.setOrdem(etapaOrdem++);
+            etapa.setEtapaTemplate(etapaTemplate);
+            etapa.setNome(etapaTemplate.getNome());
+            etapa.setDescricao(etapaTemplate.getDescricao());
+            etapa.setOrdem(etapaTemplate.getOrdem());
 
-            int itemOrdem = 0;
-            for (EtapaSeed.ItemTemplate itemTemplate : etapaTemplate.itens()) {
+            for (ChecklistItemTemplate itemTemplate : etapaTemplate.getItensOrdenados()) {
                 ChecklistItem item = new ChecklistItem();
                 item.setEtapa(etapa);
-                item.setDescricao(itemTemplate.descricao());
-                item.setOrdem(itemOrdem++);
+                item.setChecklistItemTemplate(itemTemplate);
+                item.setDescricao(itemTemplate.getDescricao());
+                item.setOrdem(itemTemplate.getOrdem());
                 etapa.getChecklistItems().add(item);
             }
 

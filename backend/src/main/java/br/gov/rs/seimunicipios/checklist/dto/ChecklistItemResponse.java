@@ -9,15 +9,27 @@ public record ChecklistItemResponse(
         String descricao,
         boolean concluido,
         LocalDate dataConclusao,
-        Integer ordem
+        Integer ordem,
+        Long templateId,
+        LocalDate dataInicio,
+        LocalDate dataFim,
+        Integer duracaoDias,
+        Integer percentualPrevisto,
+        String predecessoras
 ) {
     public static ChecklistItemResponse from(ChecklistItem item) {
         return new ChecklistItemResponse(
                 item.getId(),
-                item.getDescricao(),
+                item.getDescricaoEfetiva(),
                 item.isConcluido(),
                 item.getDataConclusao(),
-                item.getOrdem()
+                item.getOrdemEfetiva(),
+                item.getTemplateId(),
+                item.getDataInicio(),
+                item.getDataFim(),
+                item.getDuracaoEfetiva(),
+                item.getPercentualPrevisto(),
+                item.getPredecessoras()
         );
     }
 }

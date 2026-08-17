@@ -1,0 +1,179 @@
+<div class="mx-auto max-w-5xl px-4 py-8">
+  <a routerLink="/" class="text-sm text-brand-blue hover:underline">&larr; Voltar</a>
+
+  <div class="mt-2 flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Fases e tarefas padrão</h1>
+      <p class="text-sm text-gray-500">
+        Modelo único usado por todos os municípios. Ajustar aqui reflete automaticamente em
+        cada município que ainda estiver com a fase/tarefa vinculada ao padrão.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="rounded-lg bg-brand-blue px-3 py-1.5 text-sm font-semibold text-white hover:opacity-90"
+      (click)="mostrarFormNovaFase.set(!mostrarFormNovaFase())"
+    >
+      + Adicionar fase padrão
+    </button>
+  </div>
+
+  @if (mostrarFormNovaFase()) {
+    <div class="mt-4 space-y-2 rounded-xl border border-dashed border-gray-300 p-4">
+      <input
+        type="text"
+        [ngModel]="novaFaseNome()"
+        (ngModelChange)="novaFaseNome.set($event)"
+        placeholder="Nome da fase"
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      />
+      <input
+        type="text"
+        [ngModel]="novaFaseDescricao()"
+        (ngModelChange)="novaFaseDescricao.set($event)"
+        placeholder="Descrição (opcional)"
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+      />
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          [ngModel]="novaFaseDuracao()"
+          (ngModelChange)="novaFaseDuracao.set($event)"
+          placeholder="Duração padrão (dias)"
+          class="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+        />
+        <button
+          type="button"
+          class="rounded-lg bg-brand-green px-3 py-2 text-sm font-semibold text-white hover:opacity-90"
+          (click)="adicionarFase()"
+        >
+          Salvar
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (carregando()) {
+    <p class="mt-6 text-gray-500">Carregando...</p>
+  } @else if (erro()) {
+    <p class="mt-6 text-brand-red">{{ erro() }}</p>
+  } @else {
+    <div class="mt-6 space-y-3">
+      @for (fase of templates(); track fase.id) {
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div class="flex items-center gap-3 p-4">
+            <button type="button" class="flex flex-1 items-center gap-3 text-left" (click)="toggleFase(fase.id)">
+              <span class="text-gray-400">{{ expandedFaseId() === fase.id ? '▾' : '▸' }}</span>
+
+              @if (faseEmEdicaoId() === fase.id) {
+                <input
+                  type="text"
+                  [ngModel]="faseEdicaoNome()"
+                  (ngModelChange)="faseEdicaoNome.set($event)"
+                  (click)="$event.stopPropagation()"
+                  class="rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+                />
+              } @else {
+                <span class="font-semibold text-gray-900">{{ fase.nome }}</span>
+              }
+
+              @if (fase.duracaoDias) {
+                <span class="text-xs text-gray-500">{{ fase.duracaoDias }} dias</span>
+              }
+            </button>
+
+            @if (faseEmEdicaoId() === fase.id) {
+              <input
+                type="number"
+                [ngModel]="faseEdicaoDuracao()"
+                (ngModelChange)="faseEdicaoDuracao.set($event)"
+                placeholder="Duração (dias)"
+                class="w-32 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+              />
+              <button type="button" class="text-xs font-semibold text-brand-green" (click)="salvarEdicaoFase(fase)">salvar</button>
+              <button type="button" class="text-xs text-gray-400" (click)="cancelarEdicaoFase()">cancelar</button>
+            } @else {
+              <button type="button" class="text-xs text-gray-400 hover:text-brand-blue" (click)="iniciarEdicaoFase(fase)">editar</button>
+              <button type="button" class="text-xs text-gray-400 hover:text-brand-red" (click)="removerFase(fase)">remover</button>
+            }
+          </div>
+
+          @if (expandedFaseId() === fase.id) {
+            <div class="border-t border-gray-100 bg-gray-50 p-4">
+              @if (faseEmEdicaoId() === fase.id) {
+                <input
+                  type="text"
+                  [ngModel]="faseEdicaoDescricao()"
+                  (ngModelChange)="faseEdicaoDescricao.set($event)"
+                  placeholder="Descrição"
+                  class="mb-3 w-full rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+                />
+              } @else if (fase.descricao) {
+                <p class="mb-3 text-sm text-gray-600">{{ fase.descricao }}</p>
+              }
+
+              @if (fase.itens.length === 0) {
+                <p class="text-sm text-gray-400">Nenhuma tarefa padrão ainda.</p>
+              } @else {
+                <ul class="space-y-2">
+                  @for (tarefa of fase.itens; track tarefa.id) {
+                    <li class="flex items-center gap-3">
+                      @if (tarefaEmEdicaoId() === tarefa.id) {
+                        <input
+                          type="text"
+                          [ngModel]="tarefaEdicaoDescricao()"
+                          (ngModelChange)="tarefaEdicaoDescricao.set($event)"
+                          class="flex-1 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+                        />
+                        <input
+                          type="number"
+                          [ngModel]="tarefaEdicaoDuracao()"
+                          (ngModelChange)="tarefaEdicaoDuracao.set($event)"
+                          placeholder="dias"
+                          class="w-20 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-brand-blue focus:outline-none"
+                        />
+                        <button type="button" class="text-xs font-semibold text-brand-green" (click)="salvarEdicaoTarefa(tarefa)">salvar</button>
+                        <button type="button" class="text-xs text-gray-400" (click)="cancelarEdicaoTarefa()">cancelar</button>
+                      } @else {
+                        <span class="flex-1 text-sm text-gray-700">{{ tarefa.descricao }}</span>
+                        @if (tarefa.duracaoDias) {
+                          <span class="text-xs text-gray-500">{{ tarefa.duracaoDias }} dias</span>
+                        }
+                        <button type="button" class="text-xs text-gray-400 hover:text-brand-blue" (click)="iniciarEdicaoTarefa(tarefa)">editar</button>
+                        <button type="button" class="text-xs text-gray-400 hover:text-brand-red" (click)="removerTarefa(tarefa)">remover</button>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+
+              <div class="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  [ngModel]="novaTarefaTexto[fase.id]"
+                  (ngModelChange)="novaTarefaTexto[fase.id] = $event"
+                  placeholder="Nova tarefa padrão"
+                  class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+                />
+                <input
+                  type="number"
+                  [ngModel]="novaTarefaDuracao[fase.id]"
+                  (ngModelChange)="novaTarefaDuracao[fase.id] = $event"
+                  placeholder="dias"
+                  class="w-20 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
+                />
+                <button
+                  type="button"
+                  class="rounded-lg border border-brand-blue px-3 py-2 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white"
+                  (click)="adicionarTarefa(fase)"
+                >
+                  Adicionar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

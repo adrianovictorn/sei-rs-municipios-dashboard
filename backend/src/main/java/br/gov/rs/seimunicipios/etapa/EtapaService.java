@@ -1,5 +1,6 @@
 package br.gov.rs.seimunicipios.etapa;
 
+import br.gov.rs.seimunicipios.common.IllegalOperationException;
 import br.gov.rs.seimunicipios.common.NotFoundException;
 import br.gov.rs.seimunicipios.etapa.dto.EtapaRequest;
 import br.gov.rs.seimunicipios.etapa.dto.EtapaResponse;
@@ -8,6 +9,8 @@ import br.gov.rs.seimunicipios.municipio.MunicipioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class EtapaService {
         etapa.setNome(request.nome());
         etapa.setDescricao(request.descricao());
         etapa.setOrdem(request.ordem() != null ? request.ordem() : municipio.getEtapas().size());
+        aplicarCronograma(etapa, request);
 
         municipio.getEtapas().add(etapa);
         return EtapaResponse.from(etapaRepository.save(etapa));
@@ -32,11 +36,25 @@ public class EtapaService {
 
     public EtapaResponse updateEtapa(Long etapaId, EtapaRequest request) {
         Etapa etapa = findEntityById(etapaId);
-        etapa.setNome(request.nome());
-        etapa.setDescricao(request.descricao());
-        if (request.ordem() != null) {
-            etapa.setOrdem(request.ordem());
+
+        boolean tentandoAlterarPadrao = !Objects.equals(request.nome(), etapa.getNomeEfetivo())
+                || !Objects.equals(request.descricao(), etapa.getDescricaoEfetiva())
+                || (request.ordem() != null && !Objects.equals(request.ordem(), etapa.getOrdemEfetiva()));
+
+        if (etapa.getEtapaTemplate() != null) {
+            if (tentandoAlterarPadrao) {
+                throw new IllegalOperationException(
+                        "Esta é uma fase padrão; edite nome, descrição e ordem pelo template global de fases.");
+            }
+        } else {
+            etapa.setNome(request.nome());
+            etapa.setDescricao(request.descricao());
+            if (request.ordem() != null) {
+                etapa.setOrdem(request.ordem());
+            }
         }
+
+        aplicarCronograma(etapa, request);
         return EtapaResponse.from(etapaRepository.save(etapa));
     }
 
@@ -48,5 +66,13 @@ public class EtapaService {
     public Etapa findEntityById(Long id) {
         return etapaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Etapa não encontrada: " + id));
+    }
+
+    private void aplicarCronograma(Etapa etapa, EtapaRequest request) {
+        etapa.setDataInicio(request.dataInicio());
+        etapa.setDataFim(request.dataFim());
+        etapa.setDuracaoDias(request.duracaoDias());
+        etapa.setPercentualPrevisto(request.percentualPrevisto());
+        etapa.setPredecessoras(request.predecessoras());
     }
 }

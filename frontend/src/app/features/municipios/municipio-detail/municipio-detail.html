@@ -121,6 +121,12 @@
                 <span class="font-semibold text-gray-900">{{ etapa.nome }}</span>
               }
 
+              @if (etapa.templateId) {
+                <span class="inline-flex items-center rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] font-semibold text-brand-blue">
+                  Padrão
+                </span>
+              }
+
               <app-status-badge [status]="etapa.status"></app-status-badge>
             </button>
 
@@ -132,7 +138,9 @@
               <button type="button" class="text-xs font-semibold text-brand-green" (click)="salvarEdicaoEtapa(etapa)">salvar</button>
               <button type="button" class="text-xs text-gray-400" (click)="cancelarEdicaoEtapa()">cancelar</button>
             } @else {
-              <button type="button" class="text-xs text-gray-400 hover:text-brand-blue" (click)="iniciarEdicaoEtapa(etapa)">editar</button>
+              @if (!etapa.templateId) {
+                <button type="button" class="text-xs text-gray-400 hover:text-brand-blue" (click)="iniciarEdicaoEtapa(etapa)">editar</button>
+              }
               <button type="button" class="text-xs text-gray-400 hover:text-brand-red" (click)="removerEtapa(etapa)">remover</button>
             }
           </div>
@@ -142,6 +150,56 @@
               @if (etapa.descricao) {
                 <p class="mb-3 text-sm text-gray-600">{{ etapa.descricao }}</p>
               }
+
+              <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+                <div>
+                  <label class="block text-[11px] font-medium text-gray-500">Início</label>
+                  <input
+                    type="date"
+                    [ngModel]="etapa.dataInicio"
+                    (ngModelChange)="atualizarDataInicio(etapa, $event)"
+                    class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-brand-blue focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-gray-500">Término</label>
+                  <input
+                    type="date"
+                    [ngModel]="etapa.dataFim"
+                    (ngModelChange)="atualizarDataFim(etapa, $event)"
+                    class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-brand-blue focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-gray-500">Duração (dias)</label>
+                  <input
+                    type="number"
+                    [ngModel]="etapa.duracaoDias"
+                    (ngModelChange)="atualizarDuracao(etapa, $event)"
+                    class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-brand-blue focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-gray-500">% Previsto</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    [ngModel]="etapa.percentualPrevisto"
+                    (ngModelChange)="atualizarPercentualPrevisto(etapa, $event)"
+                    class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-brand-blue focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-gray-500">Predecessoras</label>
+                  <input
+                    type="text"
+                    [ngModel]="etapa.predecessoras"
+                    (ngModelChange)="atualizarPredecessoras(etapa, $event)"
+                    class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-brand-blue focus:outline-none"
+                  />
+                </div>
+              </div>
 
               @if (etapa.checklistItems.length === 0) {
                 <p class="text-sm text-gray-400">Nenhum item de checklist ainda.</p>
@@ -169,6 +227,11 @@
                     <span class="flex-1 text-sm" [class.line-through]="item.concluido" [class.text-gray-400]="item.concluido">
                       {{ item.descricao }}
                     </span>
+                    @if (item.templateId) {
+                      <span class="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[11px] font-semibold text-brand-blue">
+                        Padrão
+                      </span>
+                    }
                     <button type="button" class="text-xs text-gray-400 hover:text-brand-red" (click)="removerItem(item.id)">
                       remover
                     </button>

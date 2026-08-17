@@ -7,7 +7,7 @@ import { MunicipioService } from '../../../core/services/municipio.service';
 import { EtapaService } from '../../../core/services/etapa.service';
 import { ChecklistItemService } from '../../../core/services/checklist-item.service';
 import { MunicipioDetail } from '../../../core/models/municipio.model';
-import { Etapa } from '../../../core/models/etapa.model';
+import { Etapa, EtapaRequest } from '../../../core/models/etapa.model';
 import { ProgressBar } from '../../../shared/components/progress-bar/progress-bar';
 import { Roadmap } from '../../../shared/components/roadmap/roadmap';
 import { StatusBadge } from '../../../shared/components/status-badge/status-badge';
@@ -135,6 +135,40 @@ export class MunicipioDetailPage {
 
   cancelarEdicaoEtapa(): void {
     this.etapaEmEdicaoId.set(null);
+  }
+
+  atualizarDataInicio(etapa: Etapa, valor: string): void {
+    this.salvarCronograma(etapa, { dataInicio: valor || undefined });
+  }
+
+  atualizarDataFim(etapa: Etapa, valor: string): void {
+    this.salvarCronograma(etapa, { dataFim: valor || undefined });
+  }
+
+  atualizarDuracao(etapa: Etapa, valor: number | null): void {
+    this.salvarCronograma(etapa, { duracaoDias: valor ?? undefined });
+  }
+
+  atualizarPercentualPrevisto(etapa: Etapa, valor: number | null): void {
+    this.salvarCronograma(etapa, { percentualPrevisto: valor ?? undefined });
+  }
+
+  atualizarPredecessoras(etapa: Etapa, valor: string): void {
+    this.salvarCronograma(etapa, { predecessoras: valor || undefined });
+  }
+
+  private salvarCronograma(etapa: Etapa, patch: Partial<EtapaRequest>): void {
+    const request: EtapaRequest = {
+      nome: etapa.nome,
+      descricao: etapa.descricao ?? undefined,
+      dataInicio: etapa.dataInicio ?? undefined,
+      dataFim: etapa.dataFim ?? undefined,
+      duracaoDias: etapa.duracaoDias ?? undefined,
+      percentualPrevisto: etapa.percentualPrevisto ?? undefined,
+      predecessoras: etapa.predecessoras ?? undefined,
+      ...patch
+    };
+    this.etapaService.atualizar(etapa.id, request).subscribe(() => this.carregar());
   }
 
   get etapasConcluidas(): Etapa[] {

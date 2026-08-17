@@ -3,10 +3,12 @@ import { MunicipioList } from './features/municipios/municipio-list/municipio-li
 import { MunicipioForm } from './features/municipios/municipio-form/municipio-form';
 import { MunicipioDetailPage } from './features/municipios/municipio-detail/municipio-detail';
 import { AtividadesKanban } from './features/atividades/atividades-kanban/atividades-kanban';
+import { FasesPadrao } from './features/fases-padrao/fases-padrao';
 
 export const routes: Routes = [
   { path: '', component: MunicipioList },
   { path: 'atividades', component: AtividadesKanban },
+  { path: 'fases-padrao', component: FasesPadrao },
   { path: 'municipios/novo', component: MunicipioForm },
   { path: 'municipios/:id/editar', component: MunicipioForm },
   { path: 'municipios/:id', component: MunicipioDetailPage },
