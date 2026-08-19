@@ -91,6 +91,7 @@
               @for (coluna of colunas(); track coluna.id) {
                 <th class="px-4 py-3 text-center">{{ coluna.nome }}</th>
               }
+              <th class="px-4 py-3 text-center">Go-live previsto</th>
               <th class="px-4 py-3">Observação</th>
             </tr>
           </thead>
@@ -119,6 +120,12 @@
                     </button>
                   </td>
                 }
+                <td class="px-4 py-3 text-center text-xs" [class.text-brand-red]="goLiveAtrasado(municipio)" [class.font-semibold]="goLiveAtrasado(municipio)">
+                  {{ formatarGoLive(municipio) || '—' }}
+                  @if (goLiveAtrasado(municipio)) {
+                    <span class="ml-1">⚠</span>
+                  }
+                </td>
                 <td class="px-4 py-3">
                   <textarea
                     [ngModel]="municipio.observacoes"
@@ -133,7 +140,7 @@
               @for (coluna of colunas(); track coluna.id) {
                 @if (celulaExpandida(municipio.id, coluna.id)) {
                   <tr class="no-print border-t border-slate-800 bg-slate-950/60">
-                    <td [attr.colspan]="colunas().length + 3" class="px-6 py-3">
+                    <td [attr.colspan]="colunas().length + 4" class="px-6 py-3">
                       <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                         {{ coluna.nome }} — {{ municipio.nome }}
                       </p>

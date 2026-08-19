@@ -95,6 +95,13 @@ export class FasesPadrao {
     this.etapaTemplateService.excluirFase(fase.id).subscribe(() => this.carregar());
   }
 
+  removerFaseEmTodosMunicipios(fase: EtapaTemplate): void {
+    if (!confirm(`Apagar a fase "${fase.nome}" e TODO o progresso já registrado nela em TODOS os municípios? Essa ação não pode ser desfeita.`)) {
+      return;
+    }
+    this.etapaTemplateService.excluirFase(fase.id, true).subscribe(() => this.carregar());
+  }
+
   iniciarEdicaoFase(fase: EtapaTemplate): void {
     this.faseEmEdicaoId.set(fase.id);
     this.faseEdicaoNome.set(fase.nome);
@@ -150,6 +157,13 @@ export class FasesPadrao {
       return;
     }
     this.etapaTemplateService.excluirTarefa(tarefa.id).subscribe(() => this.carregar());
+  }
+
+  removerTarefaEmTodosMunicipios(tarefa: ChecklistItemTemplate): void {
+    if (!confirm(`Apagar a tarefa "${tarefa.descricao}" e TODO o progresso já registrado nela em TODOS os municípios? Essa ação não pode ser desfeita.`)) {
+      return;
+    }
+    this.etapaTemplateService.excluirTarefa(tarefa.id, true).subscribe(() => this.carregar());
   }
 
   iniciarEdicaoTarefa(tarefa: ChecklistItemTemplate): void {

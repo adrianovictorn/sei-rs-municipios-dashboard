@@ -87,6 +87,18 @@ public class EtapaTemplateService {
         etapaTemplateRepository.delete(template);
     }
 
+    /**
+     * Diferente de deleteFase: apaga a fase de todo municipio vinculado (etapa + seus
+     * checklist items, via cascade), em vez de desvincular preservando o texto local.
+     * Destrutivo e sem volta - usado quando o admin realmente quer sumir com a fase em
+     * todo lugar, nao so no template.
+     */
+    public void deleteFaseEmTodosMunicipios(Long id) {
+        EtapaTemplate template = findEntityById(id);
+        etapaRepository.deleteAll(etapaRepository.findByEtapaTemplateId(id));
+        etapaTemplateRepository.delete(template);
+    }
+
     public ChecklistItemTemplateResponse addTarefa(Long faseTemplateId, ChecklistItemTemplateRequest request) {
         EtapaTemplate faseTemplate = findEntityById(faseTemplateId);
 
@@ -125,6 +137,13 @@ public class EtapaTemplateService {
         for (ChecklistItem item : checklistItemRepository.findByChecklistItemTemplateId(id)) {
             desvincularItem(item, itemTemplate);
         }
+        checklistItemTemplateRepository.delete(itemTemplate);
+    }
+
+    /** Analogo destrutivo de deleteTarefa: apaga o item de todo municipio vinculado. */
+    public void deleteTarefaEmTodosMunicipios(Long id) {
+        ChecklistItemTemplate itemTemplate = findItemEntityById(id);
+        checklistItemRepository.deleteAll(checklistItemRepository.findByChecklistItemTemplateId(id));
         checklistItemTemplateRepository.delete(itemTemplate);
     }
 

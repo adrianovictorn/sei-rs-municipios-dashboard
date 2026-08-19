@@ -24,8 +24,10 @@ export class EtapaTemplateService {
     return this.http.put<EtapaTemplate>(`/api/etapa-templates/${id}`, request);
   }
 
-  excluirFase(id: number): Observable<void> {
-    return this.http.delete<void>(`/api/etapa-templates/${id}`);
+  excluirFase(id: number, emTodosMunicipios = false): Observable<void> {
+    return this.http.delete<void>(`/api/etapa-templates/${id}`, {
+      params: { emTodosMunicipios }
+    });
   }
 
   adicionarTarefa(faseId: number, request: ChecklistItemTemplateRequest): Observable<ChecklistItemTemplate> {
@@ -36,7 +38,9 @@ export class EtapaTemplateService {
     return this.http.put<ChecklistItemTemplate>(`/api/checklist-item-templates/${id}`, request);
   }
 
-  excluirTarefa(id: number): Observable<void> {
-    return this.http.delete<void>(`/api/checklist-item-templates/${id}`);
+  excluirTarefa(id: number, emTodosMunicipios = false): Observable<void> {
+    return this.http.delete<void>(`/api/checklist-item-templates/${id}`, {
+      params: { emTodosMunicipios }
+    });
   }
 }

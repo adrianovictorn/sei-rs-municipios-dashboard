@@ -48,6 +48,9 @@ public class Municipio {
     @Column(name = "data_inicio")
     private LocalDate dataInicio;
 
+    @Column(name = "data_prevista_golive")
+    private LocalDate dataPrevistaGolive;
+
     @Column(columnDefinition = "TEXT")
     private String observacoes;
 

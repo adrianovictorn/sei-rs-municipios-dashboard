@@ -6,7 +6,7 @@ import { MunicipioService } from '../../core/services/municipio.service';
 import { EtapaTemplateService } from '../../core/services/etapa-template.service';
 import { MunicipioDetail, MunicipioRequest } from '../../core/models/municipio.model';
 import { EtapaTemplate } from '../../core/models/etapa-template.model';
-import { CelulaStatus, calcularCelula, formatarDataBr } from './matriz-status.model';
+import { CelulaStatus, calcularCelula, formatarDataBr, formatarDataCompletaBr } from './matriz-status.model';
 
 type SortBy = 'prazo' | 'percentual' | 'equipe' | 'atraso';
 
@@ -45,6 +45,7 @@ export class MatrizStatus {
   exportando = signal(false);
 
   expandedCell = signal<string | null>(null);
+  hojeIso = new Date().toISOString().slice(0, 10);
 
   sortBy = signal<SortBy>('prazo');
   filtroEquipe = signal<string>('todas');
@@ -151,6 +152,14 @@ export class MatrizStatus {
     return calcularCelula(etapa);
   }
 
+  goLiveAtrasado(municipio: MunicipioDetail): boolean {
+    return !!municipio.dataPrevistaGolive && municipio.dataPrevistaGolive < this.hojeIso && municipio.progresso < 100;
+  }
+
+  formatarGoLive(municipio: MunicipioDetail): string {
+    return formatarDataCompletaBr(municipio.dataPrevistaGolive);
+  }
+
   badgeClasse(cel: CelulaStatus): string {
     return BADGE_CLASSE[cel.tipo];
   }
@@ -204,6 +213,7 @@ export class MatrizStatus {
       pontoFocalEmail: municipio.pontoFocalEmail ?? undefined,
       pontoFocalTelefone: municipio.pontoFocalTelefone ?? undefined,
       dataInicio: municipio.dataInicio ?? undefined,
+      dataPrevistaGolive: municipio.dataPrevistaGolive ?? undefined,
       observacoes: texto,
       equipeId: municipio.equipeId ?? undefined,
       parado: municipio.parado
@@ -223,7 +233,7 @@ export class MatrizStatus {
       const sheet = workbook.addWorksheet('Matriz de status');
       const colunas = this.colunas();
 
-      sheet.addRow(['Município', 'Equipe', ...colunas.map((c) => c.nome), 'Observação']);
+      sheet.addRow(['Município', 'Equipe', ...colunas.map((c) => c.nome), 'Go-live previsto', 'Observação']);
       const cabecalho = sheet.getRow(1);
       cabecalho.font = { bold: true, color: { argb: 'FFFFFFFF' } };
       cabecalho.eachCell((cell) => {
@@ -235,6 +245,7 @@ export class MatrizStatus {
           municipio.nome,
           municipio.parado ? 'parado' : municipio.equipeNome ?? '',
           ...colunas.map((c) => this.badgeTexto(this.celula(municipio, c))),
+          formatarDataCompletaBr(municipio.dataPrevistaGolive),
           municipio.observacoes ?? ''
         ]);
 

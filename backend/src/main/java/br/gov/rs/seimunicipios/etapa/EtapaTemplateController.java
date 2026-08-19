@@ -35,8 +35,15 @@ public class EtapaTemplateController {
     }
 
     @DeleteMapping("/api/etapa-templates/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        etapaTemplateService.deleteFase(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @RequestParam(name = "emTodosMunicipios", defaultValue = "false") boolean emTodosMunicipios
+    ) {
+        if (emTodosMunicipios) {
+            etapaTemplateService.deleteFaseEmTodosMunicipios(id);
+        } else {
+            etapaTemplateService.deleteFase(id);
+        }
         return ResponseEntity.noContent().build();
     }
 
@@ -52,8 +59,15 @@ public class EtapaTemplateController {
     }
 
     @DeleteMapping("/api/checklist-item-templates/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        etapaTemplateService.deleteTarefa(id);
+    public ResponseEntity<Void> deleteItem(
+            @PathVariable Long id,
+            @RequestParam(name = "emTodosMunicipios", defaultValue = "false") boolean emTodosMunicipios
+    ) {
+        if (emTodosMunicipios) {
+            etapaTemplateService.deleteTarefaEmTodosMunicipios(id);
+        } else {
+            etapaTemplateService.deleteTarefa(id);
+        }
         return ResponseEntity.noContent().build();
     }
 }

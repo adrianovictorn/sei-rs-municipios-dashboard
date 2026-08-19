@@ -5,6 +5,7 @@ export interface MunicipioSummary {
   nome: string;
   regiao: string | null;
   dataInicio: string | null;
+  dataPrevistaGolive: string | null;
   progresso: number;
   totalEtapas: number;
   etapasConcluidas: number;
@@ -25,6 +26,7 @@ export interface MunicipioDetail {
   pontoFocalEmail: string | null;
   pontoFocalTelefone: string | null;
   dataInicio: string | null;
+  dataPrevistaGolive: string | null;
   observacoes: string | null;
   equipeId: number | null;
   equipeNome: string | null;
@@ -45,6 +47,7 @@ export interface MunicipioRequest {
   pontoFocalEmail?: string;
   pontoFocalTelefone?: string;
   dataInicio?: string;
+  dataPrevistaGolive?: string;
   observacoes?: string;
   equipeId?: number;
   parado?: boolean;

@@ -48,3 +48,11 @@ export function formatarDataBr(iso: string | null): string {
   const [ano, mes, dia] = iso.split('-');
   return `${dia}/${mes}`;
 }
+
+export function formatarDataCompletaBr(iso: string | null): string {
+  if (!iso) {
+    return '';
+  }
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}

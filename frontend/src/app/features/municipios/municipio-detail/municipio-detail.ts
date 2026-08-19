@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -15,7 +15,7 @@ import { StatusBadge } from '../../../shared/components/status-badge/status-badg
 @Component({
   selector: 'app-municipio-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, DecimalPipe, ProgressBar, Roadmap, StatusBadge],
+  imports: [RouterLink, FormsModule, DecimalPipe, DatePipe, ProgressBar, Roadmap, StatusBadge],
   templateUrl: './municipio-detail.html'
 })
 export class MunicipioDetailPage {
@@ -25,6 +25,7 @@ export class MunicipioDetailPage {
   private readonly checklistItemService = inject(ChecklistItemService);
 
   municipioId = Number(this.route.snapshot.paramMap.get('id'));
+  hojeIso = new Date().toISOString().slice(0, 10);
 
   municipio = signal<MunicipioDetail | null>(null);
   carregando = signal(true);

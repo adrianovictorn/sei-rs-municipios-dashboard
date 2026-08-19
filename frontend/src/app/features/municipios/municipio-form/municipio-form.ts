@@ -33,6 +33,7 @@ export class MunicipioForm {
     pontoFocalEmail: ['', [Validators.email]],
     pontoFocalTelefone: [''],
     dataInicio: [''],
+    dataPrevistaGolive: [''],
     observacoes: [''],
     equipeId: [null as number | null],
     parado: [false]
@@ -56,6 +57,7 @@ export class MunicipioForm {
           pontoFocalEmail: municipio.pontoFocalEmail ?? '',
           pontoFocalTelefone: municipio.pontoFocalTelefone ?? '',
           dataInicio: municipio.dataInicio ?? '',
+          dataPrevistaGolive: municipio.dataPrevistaGolive ?? '',
           observacoes: municipio.observacoes ?? '',
           equipeId: municipio.equipeId,
           parado: municipio.parado
@@ -84,6 +86,7 @@ export class MunicipioForm {
       pontoFocalEmail: raw.pontoFocalEmail || undefined,
       pontoFocalTelefone: raw.pontoFocalTelefone || undefined,
       dataInicio: raw.dataInicio || undefined,
+      dataPrevistaGolive: raw.dataPrevistaGolive || undefined,
       observacoes: raw.observacoes || undefined,
       equipeId: raw.equipeId ?? undefined,
       parado: raw.parado

@@ -71,6 +71,7 @@ public class MunicipioService {
         municipio.setPontoFocalEmail(request.pontoFocalEmail());
         municipio.setPontoFocalTelefone(request.pontoFocalTelefone());
         municipio.setDataInicio(request.dataInicio());
+        municipio.setDataPrevistaGolive(request.dataPrevistaGolive());
         municipio.setObservacoes(request.observacoes());
         municipio.setParado(Boolean.TRUE.equals(request.parado()));
         municipio.setEquipe(request.equipeId() != null
