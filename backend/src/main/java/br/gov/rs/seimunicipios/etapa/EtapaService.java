@@ -38,20 +38,23 @@ public class EtapaService {
         Etapa etapa = findEntityById(etapaId);
 
         boolean tentandoAlterarPadrao = !Objects.equals(request.nome(), etapa.getNomeEfetivo())
-                || !Objects.equals(request.descricao(), etapa.getDescricaoEfetiva())
-                || (request.ordem() != null && !Objects.equals(request.ordem(), etapa.getOrdemEfetiva()));
+                || !Objects.equals(request.descricao(), etapa.getDescricaoEfetiva());
 
         if (etapa.getEtapaTemplate() != null) {
             if (tentandoAlterarPadrao) {
                 throw new IllegalOperationException(
-                        "Esta é uma fase padrão; edite nome, descrição e ordem pelo template global de fases.");
+                        "Esta é uma fase padrão; edite nome e descrição pelo template global de fases.");
             }
         } else {
             etapa.setNome(request.nome());
             etapa.setDescricao(request.descricao());
-            if (request.ordem() != null) {
-                etapa.setOrdem(request.ordem());
-            }
+        }
+
+        // A ordem e sempre editavel por municipio, mesmo em fase vinculada a template:
+        // uma vez definida aqui, essa fase passa a usar a ordem local (ver Etapa#getOrdemEfetiva)
+        // e nao acompanha mais reordenacoes futuras do template.
+        if (request.ordem() != null) {
+            etapa.setOrdem(request.ordem());
         }
 
         aplicarCronograma(etapa, request);

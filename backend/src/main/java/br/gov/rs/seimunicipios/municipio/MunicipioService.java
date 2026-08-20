@@ -96,14 +96,14 @@ public class MunicipioService {
             etapa.setEtapaTemplate(etapaTemplate);
             etapa.setNome(etapaTemplate.getNome());
             etapa.setDescricao(etapaTemplate.getDescricao());
-            etapa.setOrdem(etapaTemplate.getOrdem());
+            // ordem fica nula: segue a ordem do template ao vivo ate esse municipio
+            // reordenar a fase (ver Etapa#getOrdemEfetiva)
 
             for (ChecklistItemTemplate itemTemplate : etapaTemplate.getItensOrdenados()) {
                 ChecklistItem item = new ChecklistItem();
                 item.setEtapa(etapa);
                 item.setChecklistItemTemplate(itemTemplate);
                 item.setDescricao(itemTemplate.getDescricao());
-                item.setOrdem(itemTemplate.getOrdem());
                 etapa.getChecklistItems().add(item);
             }
 

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { EtapaTemplateService } from '../../core/services/etapa-template.service';
 import { ChecklistItemTemplate, EtapaTemplate } from '../../core/models/etapa-template.model';
 
@@ -135,6 +136,32 @@ export class FasesPadrao {
     this.faseEmEdicaoId.set(null);
   }
 
+  moverFase(fase: EtapaTemplate, direcao: 'cima' | 'baixo'): void {
+    const templates = this.templates();
+    const index = templates.findIndex((t) => t.id === fase.id);
+    const alvoIndex = direcao === 'cima' ? index - 1 : index + 1;
+    if (index === -1 || alvoIndex < 0 || alvoIndex >= templates.length) {
+      return;
+    }
+    const atual = templates[index];
+    const vizinha = templates[alvoIndex];
+    forkJoin([
+      this.etapaTemplateService.atualizarFase(atual.id, this.construirRequestFase(atual, vizinha.ordem)),
+      this.etapaTemplateService.atualizarFase(vizinha.id, this.construirRequestFase(vizinha, atual.ordem))
+    ]).subscribe(() => this.carregar());
+  }
+
+  private construirRequestFase(fase: EtapaTemplate, ordem: number) {
+    return {
+      nome: fase.nome,
+      descricao: fase.descricao ?? undefined,
+      ordem,
+      duracaoDias: fase.duracaoDias ?? undefined,
+      exibirMatriz: fase.exibirMatriz,
+      ordemMatriz: fase.ordemMatriz ?? undefined
+    };
+  }
+
   adicionarTarefa(fase: EtapaTemplate): void {
     const descricao = (this.novaTarefaTexto[fase.id] ?? '').trim();
     if (!descricao) {
@@ -191,5 +218,20 @@ export class FasesPadrao {
 
   cancelarEdicaoTarefa(): void {
     this.tarefaEmEdicaoId.set(null);
+  }
+
+  moverTarefa(fase: EtapaTemplate, tarefa: ChecklistItemTemplate, direcao: 'cima' | 'baixo'): void {
+    const itens = fase.itens;
+    const index = itens.findIndex((t) => t.id === tarefa.id);
+    const alvoIndex = direcao === 'cima' ? index - 1 : index + 1;
+    if (index === -1 || alvoIndex < 0 || alvoIndex >= itens.length) {
+      return;
+    }
+    const atual = itens[index];
+    const vizinha = itens[alvoIndex];
+    forkJoin([
+      this.etapaTemplateService.atualizarTarefa(atual.id, { descricao: atual.descricao, ordem: vizinha.ordem, duracaoDias: atual.duracaoDias ?? undefined }),
+      this.etapaTemplateService.atualizarTarefa(vizinha.id, { descricao: vizinha.descricao, ordem: atual.ordem, duracaoDias: vizinha.duracaoDias ?? undefined })
+    ]).subscribe(() => this.carregar());
   }
 }

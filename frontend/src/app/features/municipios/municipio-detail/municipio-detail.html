@@ -108,9 +108,29 @@
     }
 
     <div class="mt-4 space-y-3">
-      @for (etapa of m.etapas; track etapa.id) {
+      @for (etapa of m.etapas; track etapa.id; let idx = $index, count = $count) {
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
           <div class="flex items-center gap-3 p-4">
+            <div class="flex flex-col">
+              <button
+                type="button"
+                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                [disabled]="idx === 0"
+                title="Mover para cima"
+                (click)="moverEtapa(etapa, 'cima')"
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                [disabled]="idx === count - 1"
+                title="Mover para baixo"
+                (click)="moverEtapa(etapa, 'baixo')"
+              >
+                ▼
+              </button>
+            </div>
             <button
               type="button"
               class="flex flex-1 items-center gap-3 text-left"

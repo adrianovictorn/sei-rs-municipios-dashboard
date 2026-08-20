@@ -53,14 +53,10 @@ public class ChecklistItemService {
             }
         }
 
+        // A ordem e sempre editavel por municipio, mesmo em tarefa vinculada a template
+        // (ver ChecklistItem#getOrdemEfetiva).
         if (request.ordem() != null) {
-            if (vinculadoAoTemplate && !request.ordem().equals(item.getOrdemEfetiva())) {
-                throw new IllegalOperationException(
-                        "Esta é uma tarefa padrão; edite a ordem pelo template global de fases.");
-            }
-            if (!vinculadoAoTemplate) {
-                item.setOrdem(request.ordem());
-            }
+            item.setOrdem(request.ordem());
         }
 
         if (request.concluido() != null) {

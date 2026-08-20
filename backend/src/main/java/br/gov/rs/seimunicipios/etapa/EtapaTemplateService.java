@@ -59,7 +59,8 @@ public class EtapaTemplateService {
             etapa.setEtapaTemplate(template);
             etapa.setNome(template.getNome());
             etapa.setDescricao(template.getDescricao());
-            etapa.setOrdem(template.getOrdem());
+            // ordem fica nula de proposito: segue a ordem do template ao vivo ate o
+            // municipio reordenar essa fase especificamente (ver Etapa#getOrdemEfetiva)
             etapaRepository.save(etapa);
         }
 
@@ -115,7 +116,7 @@ public class EtapaTemplateService {
             item.setEtapa(etapa);
             item.setChecklistItemTemplate(itemTemplate);
             item.setDescricao(itemTemplate.getDescricao());
-            item.setOrdem(itemTemplate.getOrdem());
+            // ordem fica nula pelo mesmo motivo do createFase acima
             checklistItemRepository.save(item);
         }
 
@@ -160,7 +161,11 @@ public class EtapaTemplateService {
     private void desvincularEtapa(Etapa etapa, EtapaTemplate template) {
         etapa.setNome(template.getNome());
         etapa.setDescricao(template.getDescricao());
-        etapa.setOrdem(template.getOrdem());
+        if (etapa.getOrdem() == null) {
+            // so herda a ordem do template se o municipio nunca tinha reordenado essa
+            // fase; se ja tinha (ordem local setada), essa preferencia e preservada.
+            etapa.setOrdem(template.getOrdem());
+        }
         etapa.setEtapaTemplate(null);
         for (ChecklistItem item : etapa.getChecklistItems()) {
             if (item.getChecklistItemTemplate() != null && item.getChecklistItemTemplate().getEtapaTemplate().equals(template)) {
@@ -171,7 +176,9 @@ public class EtapaTemplateService {
 
     private void desvincularItem(ChecklistItem item, ChecklistItemTemplate itemTemplate) {
         item.setDescricao(itemTemplate.getDescricao());
-        item.setOrdem(itemTemplate.getOrdem());
+        if (item.getOrdem() == null) {
+            item.setOrdem(itemTemplate.getOrdem());
+        }
         item.setChecklistItemTemplate(null);
     }
 }

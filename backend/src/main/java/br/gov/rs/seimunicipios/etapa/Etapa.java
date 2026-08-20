@@ -35,8 +35,14 @@ public class Etapa {
     @Column(length = 500)
     private String descricao;
 
-    @Column(nullable = false)
-    private Integer ordem = 0;
+    /**
+     * Ordem local, dona da posicao no roadmap desse municipio. Nula enquanto a fase
+     * segue a ordem do template ao vivo (ver getOrdemEfetiva) - so ganha um valor
+     * quando o municipio reordena essa fase especificamente, o que passa a valer por
+     * cima de qualquer reordenacao futura do template pra essa fase.
+     */
+    @Column
+    private Integer ordem;
 
     @Column(name = "data_solicitacao")
     private LocalDate dataSolicitacao;
@@ -104,8 +110,12 @@ public class Etapa {
         return etapaTemplate != null ? etapaTemplate.getDescricao() : descricao;
     }
 
+    /** Ordem exibida: local quando o municipio ja reordenou essa fase, senao a do template ao vivo. */
     public Integer getOrdemEfetiva() {
-        return etapaTemplate != null ? etapaTemplate.getOrdem() : ordem;
+        if (ordem != null) {
+            return ordem;
+        }
+        return etapaTemplate != null ? etapaTemplate.getOrdem() : 0;
     }
 
     public Integer getDuracaoEfetiva() {

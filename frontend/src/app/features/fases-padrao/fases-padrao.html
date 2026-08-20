@@ -77,9 +77,29 @@
     <p class="mt-6 text-brand-red">{{ erro() }}</p>
   } @else {
     <div class="mt-6 space-y-3">
-      @for (fase of templates(); track fase.id) {
+      @for (fase of templates(); track fase.id; let idx = $index, count = $count) {
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
           <div class="flex items-center gap-3 p-4">
+            <div class="flex flex-col">
+              <button
+                type="button"
+                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                [disabled]="idx === 0"
+                title="Mover para cima (ordem geral)"
+                (click)="moverFase(fase, 'cima')"
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                [disabled]="idx === count - 1"
+                title="Mover para baixo (ordem geral)"
+                (click)="moverFase(fase, 'baixo')"
+              >
+                ▼
+              </button>
+            </div>
             <button type="button" class="flex flex-1 items-center gap-3 text-left" (click)="toggleFase(fase.id)">
               <span class="text-gray-400">{{ expandedFaseId() === fase.id ? '▾' : '▸' }}</span>
 
@@ -165,8 +185,28 @@
                 <p class="text-sm text-gray-400">Nenhuma tarefa padrão ainda.</p>
               } @else {
                 <ul class="space-y-2">
-                  @for (tarefa of fase.itens; track tarefa.id) {
+                  @for (tarefa of fase.itens; track tarefa.id; let idx = $index, count = $count) {
                     <li class="flex items-center gap-3">
+                      <div class="flex flex-col">
+                        <button
+                          type="button"
+                          class="text-[10px] leading-none text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                          [disabled]="idx === 0"
+                          title="Mover para cima"
+                          (click)="moverTarefa(fase, tarefa, 'cima')"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          class="text-[10px] leading-none text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                          [disabled]="idx === count - 1"
+                          title="Mover para baixo"
+                          (click)="moverTarefa(fase, tarefa, 'baixo')"
+                        >
+                          ▼
+                        </button>
+                      </div>
                       @if (tarefaEmEdicaoId() === tarefa.id) {
                         <input
                           type="text"

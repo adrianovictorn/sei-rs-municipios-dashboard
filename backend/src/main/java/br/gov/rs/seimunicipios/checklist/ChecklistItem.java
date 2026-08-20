@@ -34,8 +34,9 @@ public class ChecklistItem {
     @Column(name = "data_conclusao")
     private LocalDate dataConclusao;
 
-    @Column(nullable = false)
-    private Integer ordem = 0;
+    /** Ordem local; nula enquanto a tarefa segue a ordem do template ao vivo (ver getOrdemEfetiva). */
+    @Column
+    private Integer ordem;
 
     @Column(name = "data_inicio")
     private LocalDate dataInicio;
@@ -58,7 +59,10 @@ public class ChecklistItem {
     }
 
     public Integer getOrdemEfetiva() {
-        return checklistItemTemplate != null ? checklistItemTemplate.getOrdem() : ordem;
+        if (ordem != null) {
+            return ordem;
+        }
+        return checklistItemTemplate != null ? checklistItemTemplate.getOrdem() : 0;
     }
 
     public Integer getDuracaoEfetiva() {

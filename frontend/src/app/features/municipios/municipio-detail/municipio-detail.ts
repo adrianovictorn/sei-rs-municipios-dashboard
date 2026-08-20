@@ -138,6 +138,21 @@ export class MunicipioDetailPage {
     this.etapaEmEdicaoId.set(null);
   }
 
+  moverEtapa(etapa: Etapa, direcao: 'cima' | 'baixo'): void {
+    const etapas = this.municipio()?.etapas ?? [];
+    const index = etapas.findIndex((e) => e.id === etapa.id);
+    const alvoIndex = direcao === 'cima' ? index - 1 : index + 1;
+    if (index === -1 || alvoIndex < 0 || alvoIndex >= etapas.length) {
+      return;
+    }
+    const atual = etapas[index];
+    const vizinha = etapas[alvoIndex];
+    forkJoin([
+      this.etapaService.atualizar(atual.id, this.construirRequestEtapa(atual, { ordem: vizinha.ordem })),
+      this.etapaService.atualizar(vizinha.id, this.construirRequestEtapa(vizinha, { ordem: atual.ordem }))
+    ]).subscribe(() => this.carregar());
+  }
+
   atualizarDataSolicitacao(etapa: Etapa, valor: string): void {
     this.salvarCronograma(etapa, { dataSolicitacao: valor || undefined });
   }
@@ -163,7 +178,11 @@ export class MunicipioDetailPage {
   }
 
   private salvarCronograma(etapa: Etapa, patch: Partial<EtapaRequest>): void {
-    const request: EtapaRequest = {
+    this.etapaService.atualizar(etapa.id, this.construirRequestEtapa(etapa, patch)).subscribe(() => this.carregar());
+  }
+
+  private construirRequestEtapa(etapa: Etapa, patch: Partial<EtapaRequest>): EtapaRequest {
+    return {
       nome: etapa.nome,
       descricao: etapa.descricao ?? undefined,
       dataSolicitacao: etapa.dataSolicitacao ?? undefined,
@@ -174,7 +193,6 @@ export class MunicipioDetailPage {
       predecessoras: etapa.predecessoras ?? undefined,
       ...patch
     };
-    this.etapaService.atualizar(etapa.id, request).subscribe(() => this.carregar());
   }
 
   get etapasConcluidas(): Etapa[] {
