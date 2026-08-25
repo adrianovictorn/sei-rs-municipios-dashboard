@@ -147,10 +147,17 @@ export class MunicipioDetailPage {
     }
     const atual = etapas[index];
     const vizinha = etapas[alvoIndex];
+    const ordemAtual = atual.ordem;
+    const ordemVizinha = vizinha.ordem;
+    const novaOrdemAtual = ordemVizinha !== ordemAtual ? ordemVizinha : ordemVizinha - 1;
+    const novaOrdemVizinha = ordemVizinha !== ordemAtual ? ordemAtual : ordemVizinha + 1;
     forkJoin([
-      this.etapaService.atualizar(atual.id, this.construirRequestEtapa(atual, { ordem: vizinha.ordem })),
-      this.etapaService.atualizar(vizinha.id, this.construirRequestEtapa(vizinha, { ordem: atual.ordem }))
-    ]).subscribe(() => this.carregar());
+      this.etapaService.atualizar(atual.id, this.construirRequestEtapa(atual, { ordem: novaOrdemAtual })),
+      this.etapaService.atualizar(vizinha.id, this.construirRequestEtapa(vizinha, { ordem: novaOrdemVizinha }))
+    ]).subscribe({
+      next: () => this.carregar(),
+      error: (err) => alert(err?.error?.message ?? 'Não foi possível reordenar essa etapa. Veja o console para detalhes.')
+    });
   }
 
   atualizarDataSolicitacao(etapa: Etapa, valor: string): void {

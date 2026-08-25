@@ -145,10 +145,15 @@ export class FasesPadrao {
     }
     const atual = templates[index];
     const vizinha = templates[alvoIndex];
+    const novaOrdemAtual = vizinha.ordem !== atual.ordem ? vizinha.ordem : vizinha.ordem - 1;
+    const novaOrdemVizinha = vizinha.ordem !== atual.ordem ? atual.ordem : vizinha.ordem + 1;
     forkJoin([
-      this.etapaTemplateService.atualizarFase(atual.id, this.construirRequestFase(atual, vizinha.ordem)),
-      this.etapaTemplateService.atualizarFase(vizinha.id, this.construirRequestFase(vizinha, atual.ordem))
-    ]).subscribe(() => this.carregar());
+      this.etapaTemplateService.atualizarFase(atual.id, this.construirRequestFase(atual, novaOrdemAtual)),
+      this.etapaTemplateService.atualizarFase(vizinha.id, this.construirRequestFase(vizinha, novaOrdemVizinha))
+    ]).subscribe({
+      next: () => this.carregar(),
+      error: (err) => alert(err?.error?.message ?? 'Não foi possível reordenar essa fase. Veja o console para detalhes.')
+    });
   }
 
   private construirRequestFase(fase: EtapaTemplate, ordem: number) {
@@ -229,9 +234,14 @@ export class FasesPadrao {
     }
     const atual = itens[index];
     const vizinha = itens[alvoIndex];
+    const novaOrdemAtual = vizinha.ordem !== atual.ordem ? vizinha.ordem : vizinha.ordem - 1;
+    const novaOrdemVizinha = vizinha.ordem !== atual.ordem ? atual.ordem : vizinha.ordem + 1;
     forkJoin([
-      this.etapaTemplateService.atualizarTarefa(atual.id, { descricao: atual.descricao, ordem: vizinha.ordem, duracaoDias: atual.duracaoDias ?? undefined }),
-      this.etapaTemplateService.atualizarTarefa(vizinha.id, { descricao: vizinha.descricao, ordem: atual.ordem, duracaoDias: vizinha.duracaoDias ?? undefined })
-    ]).subscribe(() => this.carregar());
+      this.etapaTemplateService.atualizarTarefa(atual.id, { descricao: atual.descricao, ordem: novaOrdemAtual, duracaoDias: atual.duracaoDias ?? undefined }),
+      this.etapaTemplateService.atualizarTarefa(vizinha.id, { descricao: vizinha.descricao, ordem: novaOrdemVizinha, duracaoDias: vizinha.duracaoDias ?? undefined })
+    ]).subscribe({
+      next: () => this.carregar(),
+      error: (err) => alert(err?.error?.message ?? 'Não foi possível reordenar essa tarefa. Veja o console para detalhes.')
+    });
   }
 }
