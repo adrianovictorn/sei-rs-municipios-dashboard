@@ -111,10 +111,10 @@
       @for (etapa of m.etapas; track etapa.id; let idx = $index, count = $count) {
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
           <div class="flex items-center gap-3 p-4">
-            <div class="flex flex-col">
+            <div class="flex flex-col overflow-hidden rounded-lg border border-gray-300" title="Ordem só nesse município">
               <button
                 type="button"
-                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                class="px-1.5 py-1 text-sm leading-none text-gray-500 hover:bg-gray-100 hover:text-brand-blue disabled:opacity-25 disabled:hover:bg-transparent"
                 [disabled]="idx === 0"
                 title="Mover para cima"
                 (click)="moverEtapa(etapa, 'cima')"
@@ -123,7 +123,7 @@
               </button>
               <button
                 type="button"
-                class="text-gray-400 hover:text-brand-blue disabled:opacity-25 disabled:hover:text-gray-400"
+                class="border-t border-gray-300 px-1.5 py-1 text-sm leading-none text-gray-500 hover:bg-gray-100 hover:text-brand-blue disabled:opacity-25 disabled:hover:bg-transparent"
                 [disabled]="idx === count - 1"
                 title="Mover para baixo"
                 (click)="moverEtapa(etapa, 'baixo')"

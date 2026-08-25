@@ -1,6 +1,6 @@
 <div class="w-full overflow-x-auto pb-2">
   <div class="flex min-w-max items-start">
-    @for (etapa of etapas(); track etapa.id; let last = $last) {
+    @for (etapa of etapas(); track etapa.id; let last = $last, posicao = $index) {
       <div class="flex items-center">
         <button
           type="button"
@@ -13,7 +13,7 @@
             class="flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold"
             [class]="statusClass(etapa)"
           >
-            {{ etapa.ordem + 1 }}
+            {{ posicao + 1 }}
           </span>
           <span class="text-xs font-medium text-gray-700 leading-tight">{{ etapa.nome }}</span>
           <span class="text-[11px] text-gray-500">{{ etapa.progresso }}%</span>
